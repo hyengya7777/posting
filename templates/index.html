@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시판</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📝 게시판</h1>
+            <p>자유롭게 글을 작성해보세요!</p>
+        </div>
+
+        <div class="form-section">
+            <form method="POST" action="/">
+                <div class="form-group">
+                    <label for="nickname">닉네임:</label>
+                    <input type="text" id="nickname" name="nickname" required maxlength="20" placeholder="닉네임을 입력하세요">
+                </div>
+                
+                <div class="form-group">
+                    <label for="content">내용:</label>
+                    <textarea id="content" name="content" required maxlength="500" placeholder="내용을 입력하세요"></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn">글 작성하기</button>
+            </form>
+        </div>
+
+        <div class="posts-section">
+            <h2 class="posts-title">게시글 목록</h2>
+            
+            {% if posts %}
+                <div class="post-count">총 {{ posts|length }}개의 게시글</div>
+                {% for post in posts %}
+                    <div class="post">
+                        <div class="post-header">
+                            <span class="post-author">{{ post.nickname }}</span>
+                            <span class="post-date">{{ post.date }}</span>
+                        </div>
+                        <div class="post-content">{{ post.content }}</div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-posts">
+                    아직 작성된 게시글이 없습니다.<br>
+                    첫 번째 글을 작성해보세요! 🎉
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
