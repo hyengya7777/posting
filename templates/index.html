@@ -13,6 +13,20 @@
             <p>자유롭게 글을 작성해보세요!</p>
         </div>
 
+        <!-- 알림 메시지 -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">
+                            {{ message }}
+                            <button class="flash-close" onclick="this.parentElement.style.display='none'">&times;</button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
         <div class="form-section">
             <form method="POST" action="/">
                 <div class="form-group">
@@ -23,6 +37,12 @@
                 <div class="form-group">
                     <label for="content">내용:</label>
                     <textarea id="content" name="content" required maxlength="500" placeholder="내용을 입력하세요"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">비밀번호:</label>
+                    <input type="password" id="password" name="password" required maxlength="20" placeholder="수정/삭제 시 필요한 비밀번호">
+                    <small class="form-help">게시글 수정/삭제 시 사용됩니다.</small>
                 </div>
                 
                 <button type="submit" class="submit-btn">글 작성하기</button>
@@ -38,7 +58,13 @@
                     <div class="post">
                         <div class="post-header">
                             <span class="post-author">{{ post.nickname }}</span>
-                            <span class="post-date">{{ post.date }}</span>
+                            <div class="post-meta">
+                                <span class="post-date">{{ post.date }}</span>
+                                <div class="post-actions">
+                                    <button class="edit-btn" onclick="showEditModal({{ post.id }})">수정</button>
+                                    <button class="delete-btn" onclick="showDeleteModal({{ post.id }})">삭제</button>
+                                </div>
+                            </div>
                         </div>
                         <div class="post-content">{{ post.content }}</div>
                     </div>
@@ -51,5 +77,78 @@
             {% endif %}
         </div>
     </div>
+
+    <!-- 수정 모달 -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editModal')">&times;</span>
+            <h3>게시글 수정</h3>
+            <form id="editForm" method="POST">
+                <div class="form-group">
+                    <label for="edit_password">비밀번호:</label>
+                    <input type="password" id="edit_password" name="password" required placeholder="비밀번호를 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label for="edit_nickname">닉네임:</label>
+                    <input type="text" id="edit_nickname" name="nickname" required maxlength="20">
+                </div>
+                <div class="form-group">
+                    <label for="edit_content">내용:</label>
+                    <textarea id="edit_content" name="content" required maxlength="500"></textarea>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="submit-btn">수정하기</button>
+                    <button type="button" class="cancel-btn" onclick="closeModal('editModal')">취소</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 삭제 모달 -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('deleteModal')">&times;</span>
+            <h3>게시글 삭제</h3>
+            <p>정말로 이 게시글을 삭제하시겠습니까?</p>
+            <form id="deleteForm" method="POST">
+                <div class="form-group">
+                    <label for="delete_password">비밀번호:</label>
+                    <input type="password" id="delete_password" name="password" required placeholder="비밀번호를 입력하세요">
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="delete-btn">삭제하기</button>
+                    <button type="button" class="cancel-btn" onclick="closeModal('deleteModal')">취소</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function showEditModal(postId) {
+            document.getElementById('editForm').action = '/edit/' + postId;
+            document.getElementById('editModal').style.display = 'block';
+        }
+
+        function showDeleteModal(postId) {
+            document.getElementById('deleteForm').action = '/delete/' + postId;
+            document.getElementById('deleteModal').style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // 모달 외부 클릭 시 닫기
+        window.onclick = function(event) {
+            const editModal = document.getElementById('editModal');
+            const deleteModal = document.getElementById('deleteModal');
+            if (event.target == editModal) {
+                editModal.style.display = 'none';
+            }
+            if (event.target == deleteModal) {
+                deleteModal.style.display = 'none';
+            }
+        }
+    </script>
 </body>
 </html>

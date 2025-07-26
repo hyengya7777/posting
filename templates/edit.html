@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시글 수정 - 게시판</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✏️ 게시글 수정</h1>
+            <p>게시글을 수정해보세요!</p>
+        </div>
+
+        <!-- 알림 메시지 -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">
+                            {{ message }}
+                            <button class="flash-close" onclick="this.parentElement.style.display='none'">&times;</button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="form-section">
+            <form method="POST">
+                <div class="form-group">
+                    <label for="password">비밀번호:</label>
+                    <input type="password" id="password" name="password" required maxlength="20" placeholder="게시글 비밀번호를 입력하세요">
+                    <small class="form-help">게시글 작성 시 입력한 비밀번호를 입력해주세요.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="nickname">닉네임:</label>
+                    <input type="text" id="nickname" name="nickname" required maxlength="20" value="{{ post.nickname }}" placeholder="닉네임을 입력하세요">
+                </div>
+                
+                <div class="form-group">
+                    <label for="content">내용:</label>
+                    <textarea id="content" name="content" required maxlength="500" placeholder="내용을 입력하세요">{{ post.content }}</textarea>
+                </div>
+                
+                <div class="form-buttons">
+                    <button type="submit" class="submit-btn">수정하기</button>
+                    <a href="{{ url_for('index') }}" class="cancel-btn">취소</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="posts-section">
+            <h3>원본 게시글</h3>
+            <div class="post">
+                <div class="post-header">
+                    <span class="post-author">{{ post.nickname }}</span>
+                    <span class="post-date">{{ post.date }}</span>
+                </div>
+                <div class="post-content">{{ post.content }}</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
